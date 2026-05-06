@@ -1,57 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>News Feed</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 10px;
-      background: #f5f6f8;
-    }
-    .item {
-      background: white;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #0078d4;
-      text-decoration: none;
-    }
-    .title:hover {
-      text-decoration: underline;
-    }
-    .date {
-      font-size: 11px;
-      color: gray;
-      margin-top: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>News Feed</title>
+
+<style>
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+  background: #f3f2f1;
+}
+
+.item {
+  display: flex;
+  gap: 12px;
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #0078d4;
+}
+
+.image {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.content {
+  flex: 1;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0078d4;
+  text-decoration: none;
+}
+
+.title:hover {
+  text-decoration: underline;
+}
+
+.date {
+  font-size: 11px;
+  color: gray;
+  margin-top: 4px;
+}
+</style>
+
 </head>
 
 <body>
+
 <div id="feed"></div>
 
 <script>
 fetch("https://api.rss2json.com/v1/api.json?rss_url=https://www.schuttevaer.nl/feed/")
-  .then(res => res.json())
-  .then(data => {
-    let html = "";
-    data.items.slice(0,5).forEach(item => {
-      html += `
-        <div class="item">
+.then(res => res.json())
+.then(data => {
+
+  let html = "";
+
+  data.items.slice(0,5).forEach(item => {
+
+    let img = "";
+    if (item.thumbnail) {
+      img = `<img class="image" src="${item.thumbnail}" />`;
+    }
+
+    html += `
+      <div class="item">
+        ${img}
+        <div class="content">
           <a class="title" href="${item.link}" target="_blank">${item.title}</a>
           <div class="date">${new Date(item.pubDate).toLocaleDateString()}</div>
         </div>
-      `;
-    });
-    document.getElementById("feed").innerHTML = html;
+      </div>
+    `;
   });
+
+  document.getElementById("feed").innerHTML = html;
+});
 </script>
 
 </body>
