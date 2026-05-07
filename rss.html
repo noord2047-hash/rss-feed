@@ -67,8 +67,23 @@ fetch("https://api.rss2json.com/v1/api.json?rss_url=https://www.nu.nl/rss/Algeme
   data.items.slice(0,6).forEach(item => {
 
     let img = "";
-    if (item.thumbnail) {
+
+    // 1. Eerste poging: enclosure (meest betrouwbaar)
+    if (item.enclosure && item.enclosure.link) {
+      img = `<img class="image" src="${item.enclosure.link}" />`;
+    }
+
+    // 2. Tweede poging: thumbnail (fallback)
+    else if (item.thumbnail) {
       img = `<img class="image" src="${item.thumbnail}" />`;
+    }
+
+    // 3. Laatste fallback: image uit content halen
+    else if (item.content) {
+      let match = item.content.match(/<img.*?src="(.*?)"/);
+      if (match && match[1]) {
+        img = `<img class="image" src="${match[1]}" />`;
+      }
     }
 
     html += `
